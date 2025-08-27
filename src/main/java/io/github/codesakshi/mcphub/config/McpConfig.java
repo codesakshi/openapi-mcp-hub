@@ -123,6 +123,13 @@ public class McpConfig {
     private int apiRetryDelayMs = 1000;
 
     /**
+     * Constructor for McpConfig.
+     */
+    public McpConfig(){
+
+    }
+
+    /**
      * Get the mcp server name.
      *
      * @return the mcp server name

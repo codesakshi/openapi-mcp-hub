@@ -34,17 +34,14 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
  *   <li>Handling schema extraction and input validation for API operations.</li>
  *   <li>Supporting configuration of server URLs and host overrides via {@link McpConfig}.</li>
  * </ul>
- * </p>
  * <p>
  * Usage:
  * <pre>
  *     McpApiToolProvider provider = new McpApiToolProvider();
  *     List&lt;SyncToolSpecification&gt; specs = provider.createSyncToolSpecifications(mcpConfig, jHttpClient);
  * </pre>
- * </p>
  * <p>
  * Exceptions are logged and propagated where appropriate. Operations without an operationId are skipped with a warning.
- * </p>
  *
  * @author anilalps.dev@gmail.com
  */
@@ -61,6 +58,13 @@ public class McpApiToolProvider {
      * Provider class for API execution.
      */
     private ApiExecutionProvider apiExecutionProvider = new ApiExecutionProvider();
+
+    /**
+     * Constructor for McpApiToolProvider.
+     */
+    public McpApiToolProvider(){
+
+    }
 
     /**
      * Creates a list of SyncToolSpecifications based on the provided MCP configuration and HTTP client.

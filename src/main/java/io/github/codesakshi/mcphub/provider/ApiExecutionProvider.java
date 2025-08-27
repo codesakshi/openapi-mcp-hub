@@ -41,7 +41,6 @@ import io.swagger.v3.oas.models.parameters.Parameter;
  * as well as request bodies and authorization headers. It serializes request
  * bodies to JSON and handles
  * parameter resolution according to the OpenAPI specification.
- * </p>
  * <p>
  * Usage involves supplying configuration, an HttpClient, OpenAPI operation
  * details, server URL, API path,
@@ -49,7 +48,6 @@ import io.swagger.v3.oas.models.parameters.Parameter;
  * parameter extraction, header
  * population, path resolution, and executes the HTTP request, returning the
  * response body as a string.
- * </p>
  * <p>
  * Logging is provided for request execution and error handling.
  * </p>
@@ -67,6 +65,13 @@ public class ApiExecutionProvider {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Include.NON_NULL);
         writer = objectMapper.writerWithDefaultPrettyPrinter();
+    }
+
+    /**
+     * Constructor for ApiExecutionProvider.
+     */
+    public ApiExecutionProvider(){
+        
     }
 
     /**

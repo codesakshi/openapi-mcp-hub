@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServlet;
  * <p>
  * This class is responsible for:
  * <ul>
- * <li>Building an {@link jHttpClient} with retry and timeout configurations
+ * <li>Building an {@link HttpClient} with retry and timeout configurations
  * from {@link McpConfig}.</li>
  * <li>Creating tool specifications using {@link McpApiToolProvider}.</li>
  * <li>Configuring the server's transport provider using SSE (Server-Sent
@@ -47,7 +47,6 @@ import jakarta.servlet.http.HttpServlet;
  * McpServerProvider provider = new McpServerProvider();
  * McpServerProvider.McpServerInstance instance = provider.createMcpServerInstance(appContextPath, mcpConfig);
  * </pre>
- * </p>
  * 
  * <p>
  * If no tool specifications are found, server creation is skipped and
@@ -60,7 +59,7 @@ public class McpServerProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(McpServerProvider.class);
 
-    /*
+    /**
      * Represents an instance of the MCP server, including its associated
      * HTTP servlet and path specification.
      */
@@ -69,20 +68,38 @@ public class McpServerProvider {
         private final HttpServlet servlet;
         private final String pathSpec;
 
+        /**
+         * Constructor for McpSseServerInstance.
+         * @param mcpSyncServer The MCP sync server instance.
+         * @param servlet The HTTP servlet instance.
+         * @param pathSpec The servlet path specification.
+         */
         public McpSseServerInstance(McpSyncServer mcpSyncServer, HttpServlet servlet, String pathSpec) {
             this.mcpSyncServer = mcpSyncServer;
             this.servlet = servlet;
             this.pathSpec = pathSpec;
         }
 
+        /**
+         * Gets the MCP sync server instance.
+         * @return The MCP sync server instance.
+         */
         public McpSyncServer getMcpSyncServer() {
             return mcpSyncServer;
         }
 
+        /**
+         * Gets the HTTP servlet instance.
+         * @return The HTTP servlet instance.
+         */
         public HttpServlet getServlet() {
             return servlet;
         }
 
+        /**
+         * Gets the servlet path specification.
+         * @return The servlet path specification.
+         */
         public String getPathSpec() {
             return pathSpec;
         }
@@ -92,6 +109,13 @@ public class McpServerProvider {
      * Provider class for MCP Server.
      */
     private McpApiToolProvider mcpApiToolProvider = new McpApiToolProvider();
+
+    /**
+     * Constructor for McpServerProvider.
+     */
+    public McpServerProvider(){
+
+    }
 
     /**
      * Creates an instance of the MCP server.
@@ -130,6 +154,14 @@ public class McpServerProvider {
         return createMcpServerInstance(mcpConfig, transportProvider);
     }
 
+    /**
+     * Creates an instance of the MCP server.
+     * @param mcpConfig The MCP configuration.
+     * @param transportProvider The transport provider for the MCP server.
+     * @return An instance of {@link McpSseServerInstance} or {@code null} if no
+     *         tools are found.
+     * @throws Exception if an error occurs during server creation.
+     */
     public McpSseServerInstance createMcpServerInstance(McpConfig mcpConfig,
             McpServerTransportProvider transportProvider)
             throws Exception {

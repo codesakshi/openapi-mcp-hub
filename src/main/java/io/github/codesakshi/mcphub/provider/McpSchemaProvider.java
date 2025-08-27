@@ -31,41 +31,31 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  */
 
 /**
- * Provides utilities to generate MCP (Model-Controller-Provider) schema
- * representations
- * from OpenAPI specifications. This class builds input schemas for API
- * operations,
+ * Provides utilities to generate MCP (Model-Controller-Provider) schema representations
+ * from OpenAPI specifications. This class builds input schemas for API operations,
  * supporting request bodies, parameters, queries, and headers, and serializes
- * them
- * into JSON format. The generated schemas are used for describing API inputs in
- * a
- * structured and extensible way, supporting additional metadata and OpenAPI
- * features.
+ * them into JSON format. The generated schemas are used for describing API inputs in a
+ * structured and extensible way, supporting additional metadata and OpenAPI features.
  *
  * <p>
  * Main features:
  * <ul>
- * <li>Builds MCP input schemas from OpenAPI Operation and RequestBody
- * objects.</li>
- * <li>Supports object, array, and primitive types, including nested
- * schemas.</li>
+ * <li>Builds MCP input schemas from OpenAPI Operation and RequestBody objects.</li>
+ * <li>Supports object, array, and primitive types, including nested schemas.</li>
  * <li>Handles OpenAPI references ($ref) and resolves component schemas.</li>
  * <li>Supports marking required fields and adding extra schema properties.</li>
  * <li>Serializes schemas to pretty-printed JSON using Jackson.</li>
- * <li>Provides a wrapper class {@link InputSchemaWrap} for schema
- * metadata.</li>
+ * <li>Provides a wrapper class {@link InputSchemaWrap} for schema metadata.</li>
  * </ul>
- * </p>
  *
  * <p>
- * Usage example:
- * 
- * <pre>
- * McpSchemaProvider provider = new McpSchemaProvider();
- * InputSchemaWrap schemaWrap = provider.buildInputMcpSchema(openApi, operation);
- * String schemaJson = schemaWrap.getSchema();
- * </pre>
- * </p>
+ Usage example:
+ 
+  <pre>
+  McpSchemaProvider provider = new McpSchemaProvider();
+  InputSchemaWrap schemaWrap = provider.buildInputMcpSchema(openApi, operation);
+  String schemaJson = schemaWrap.getSchema();
+  </pre>
  *
  * <p>
  * Internal classes:
@@ -73,12 +63,9 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  * <li>{@code McpBaseSchema} - Base class for all MCP schema types.</li>
  * <li>{@code McpObjectSchema} - Represents object schemas with properties.</li>
  * <li>{@code McpArraySchema} - Represents array schemas with item types.</li>
- * <li>{@code McpRequestSchema} - Specialized object schema for request
- * inputs.</li>
- * <li>{@code InputSchemaWrap} - Wrapper for schema JSON and metadata
- * flags.</li>
+ * <li>{@code McpRequestSchema} - Specialized object schema for request inputs.</li>
+ * <li>{@code InputSchemaWrap} - Wrapper for schema JSON and metadata flags.</li>
  * </ul>
- * </p>
  *
  * <p>
  * Dependencies:
@@ -87,13 +74,15 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  * <li>OpenAPI models (OpenAPI, Operation, RequestBody, Parameter, Schema).</li>
  * <li>SLF4J Logger for logging warnings and errors.</li>
  * </ul>
- * </p>
  */
 
 public class McpSchemaProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(McpSchemaProvider.class);
 
+	/**
+	 * Jackson ObjectWriter for pretty-printing JSON.
+	 */
 	private static ObjectWriter writer;
 	static {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -111,10 +100,20 @@ public class McpSchemaProvider {
 		 */
 		private String type;
 
+		/**
+		 * Constructor for McpBaseSchema.
+		 *
+		 * @param type The type of the MCP schema.
+		 */
 		public McpBaseSchema(String type) {
 			this.type = type;
 		}
 
+		/**
+		 * Gets the type of the MCP schema.
+		 *
+		 * @return The type of the MCP schema.
+		 */
 		public String getType() {
 			return type;
 		}
@@ -130,19 +129,36 @@ public class McpSchemaProvider {
 		private List<String> required;
 
 		// JsonAnyGetter will expose all the extra properties as direct properties
+		/**
+		 * Gets the extra properties for the MCP schema.
+		 * @return A map of extra properties.
+		 */
 		@JsonAnyGetter
 		public Map<String, Object> getExtra() {
 			return extra;
 		}
 
+		/**
+		 * Adds an extra property to the MCP schema.
+		 * @param key The key of the extra property.
+		 * @param value The value of the extra property.
+		 */
 		public void add(String key, Object value) {
 			extra.put(key, value);
 		}
 
+		/**
+		 * Gets the required fields for the MCP schema.
+		 * @return A list of required field names.
+		 */
 		public List<String> getRequired() {
 			return required;
 		}
 
+		/**
+		 * Adds a required field to the MCP schema.
+		 * @param required The name of the required field.
+		 */
 		public void addRequired(String required) {
 
 			if (this.required == null) {
@@ -152,6 +168,10 @@ public class McpSchemaProvider {
 			this.required.add(required);
 		}
 
+		/**
+		 * Adds a required field to the MCP schema.
+		 * @param required The name of the required field.
+		 */
 		public void addRequired(List<String> required) {
 
 			if (null == required) {
@@ -175,20 +195,41 @@ public class McpSchemaProvider {
 	 */
 	private static class McpObjectSchema extends McpBaseSchema {
 
+		/**
+		 * The properties of the MCP object schema.
+		 */
 		private Map<String, McpBaseSchema> properties = new HashMap<>();
 
+		/**
+		 * Constructor for McpObjectSchema.
+		 */
 		public McpObjectSchema() {
 			super("object");
 		}
 
+		/**
+		 * Gets the properties of the MCP object schema.
+		 * @return A map of property names to their schemas.
+		 */
 		public Map<String, McpBaseSchema> getProperties() {
 			return properties;
 		}
 
+		/**
+		 * Adds a property to the MCP object schema.
+		 * @param name The name of the property.
+		 * @param value The schema for the property.
+		 */
 		public void addProperty(String name, McpBaseSchema value) {
 			properties.put(name, value);
 		}
 
+		/**
+		 * Adds a property to the MCP object schema.
+		 * @param name The name of the property.
+		 * @param value The schema for the property.
+		 * @param required Indicates if the property is required.
+		 */
 		public void addProperty(String name, McpBaseSchema value, boolean required) {
 
 			properties.put(name, value);
@@ -198,6 +239,10 @@ public class McpSchemaProvider {
 			}
 		}
 
+		/**
+		 * Gets the extra properties for the MCP object schema.
+		 * @return A map of extra properties.
+		 */
 		@JsonIgnore
 		public boolean isEmpty() {
 			return properties.isEmpty();
@@ -210,16 +255,30 @@ public class McpSchemaProvider {
 	 */
 	private static class McpArraySchema extends McpBaseSchema {
 
+		/**
+		 * The items schema for the MCP array schema.
+		 */
 		private McpBaseSchema items;
 
+		/**
+		 * Constructor for McpArraySchema.
+		 */
 		public McpArraySchema() {
 			super("array");
 		}
 
+		/**
+		 * Gets the items schema for the MCP array schema.
+		 * @return The items schema.
+		 */
 		public McpBaseSchema getItems() {
 			return items;
 		}
 
+		/**
+		 * Sets the items schema for the MCP array schema.
+		 * @param items The items schema.
+		 */
 		public void setItems(McpBaseSchema items) {
 			this.items = items;
 		}
@@ -231,41 +290,75 @@ public class McpSchemaProvider {
 	 */
 	private static class McpRequestSchema extends McpObjectSchema {
 
+		/** Constructor for McpRequestSchema. */
 		public McpRequestSchema() {
 			super();
 		}
 
+		/**
+		 * Sets the parameters for the MCP request schema.
+		 * @param parameters The parameters schema.
+		 */
 		public void setParameters(McpObjectSchema parameters) {
 			addProperty("parameters", parameters, true);
 		}
 
+		/**
+		 * Sets the queries for the MCP request schema.
+		 * @param queries The queries schema.
+		 */
 		public void setQueries(McpObjectSchema queries) {
 			addProperty("queries", queries, true);
 		}
 
+		/**
+		 * Sets the headers for the MCP request schema.
+		 * @param headers The headers schema.
+		 */
 		public void setHeaders(McpObjectSchema headers) {
 			addProperty("headers", headers, true);
 		}
 
+		/**
+		 * Sets the request body for the MCP request schema.
+		 * @param requestBody The request body schema.
+		 * @param isRequired Indicates if the request body is required.
+		 */
 		public void setRequestBody(McpBaseSchema requestBody, boolean isRequired) {
 			addProperty("requestBody", requestBody, isRequired);
 		}
 
+		/**
+		 * Gets the parameters for the MCP request schema.
+		 * @return The parameters schema.
+		 */
 		@JsonIgnore
 		public McpObjectSchema getParemeters() {
 			return (McpObjectSchema) getProperties().get("parameters");
 		}
 
+		/**
+		 * Gets the queries for the MCP request schema.
+		 * @return The queries schema.
+		 */
 		@JsonIgnore
 		public McpObjectSchema getQueries() {
 			return (McpObjectSchema) getProperties().get("queries");
 		}
 
+		/**
+		 * Gets the headers for the MCP request schema.
+		 * @return The headers schema.
+		 */
 		@JsonIgnore
 		public McpObjectSchema getHeaders() {
 			return (McpObjectSchema) getProperties().get("headers");
 		}
 
+		/**
+		 * Gets the request body for the MCP request schema.
+		 * @return The request body schema.
+		 */
 		@JsonIgnore
 		public McpBaseSchema getRequestBody() {
 			return getProperties().get("requestBody");
@@ -297,6 +390,13 @@ public class McpSchemaProvider {
 		 */
 		private final boolean isUniqueParameters;
 
+		/**
+		 * Constructor for InputSchemaWrap.
+		 * @param schema Schema string
+		 * @param hasRequestBody Indicates if the input has a request body.
+		 * @param hasParameters Indicates if the input has parameters.
+		 * @param isUniqueParameters Indicates if the input has unique parameters.
+		 */
 		public InputSchemaWrap(String schema,
 				boolean hasRequestBody,
 				boolean hasParameters,
@@ -309,21 +409,44 @@ public class McpSchemaProvider {
 			this.isUniqueParameters = isUniqueParameters;
 		}
 
+		/**
+		 * Gets the schema for the input.
+		 * @return The schema string.
+		 */
 		public String getSchema() {
 			return schema;
 		}
 
+		/**
+		 * Gets the request body status for the input.
+		 * @return True if the input has a request body, false otherwise.
+		 */
 		public boolean isHasRequestBody() {
 			return hasRequestBody;
 		}
 
+		/**
+		 * Gets the parameters status for the input.
+		 * @return True if the input has parameters, false otherwise.
+		 */
 		public boolean isHasParameters() {
 			return hasParameters;
 		}
 
+		/**
+		 * Gets the uniqueness status for the input.
+		 * @return True if the input has unique parameters, false otherwise.
+		 */
 		public boolean isUniqueParameters() {
 			return isUniqueParameters;
 		}
+	}
+
+	/**
+	 * Constructor for McpSchemaProvider.
+	 */
+	public McpSchemaProvider(){
+
 	}
 
 	/**
@@ -337,6 +460,8 @@ public class McpSchemaProvider {
 	 * includes details about request bodies, parameters (path, query, header), and
 	 * their uniqueness.
 	 * </p>
+	 * 
+	 * @param mcpConfig The McpConfig object containing configuration settings.
 	 *
 	 * @param openApi   The OpenAPI specification object containing component
 	 *                  schemas.
@@ -348,8 +473,7 @@ public class McpSchemaProvider {
 	 * @throws RuntimeException if there is an error during schema generation or
 	 *                          serialization.
 	 */
-	public InputSchemaWrap buildInputMcpSchema(McpConfig mcpConfig, OpenAPI openApi,
-			Operation operation) {
+	public InputSchemaWrap buildInputMcpSchema(McpConfig mcpConfig, OpenAPI openApi, Operation operation) {
 
 		logger.info("Building input MCP schema for operation: {}", operation.getOperationId());
 
