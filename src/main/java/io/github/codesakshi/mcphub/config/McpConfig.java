@@ -18,7 +18,7 @@ package io.github.codesakshi.mcphub.config;
  * </p>
  * <ul>
  * <li><b>mcpServerName</b>: Unique name of the MCP server.</li>
- * <li><b>mcpServerVersion</b>: Version of the MCP server.</li>
+ * <li><b>mcpServerVersion</b>: Version of the MCP server (default: "1.0.0").</li>
  * <li><b>servletPathSpec</b>: Servlet path specification for the MCP server
  * (default: "/").</li>
  * <li><b>mcpSseEndPoint</b>: SSE endpoint for the MCP server (default:
