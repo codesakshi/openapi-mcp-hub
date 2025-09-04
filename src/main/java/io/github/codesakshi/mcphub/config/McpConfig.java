@@ -60,7 +60,7 @@ public class McpConfig {
     /**
      * Version of the mcp server.
      */
-    private String mcpServerVersion;
+    private String mcpServerVersion = "1.0.0";
 
     /**
      * Servlet Path specification for the mcp server.
